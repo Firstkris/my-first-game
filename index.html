@@ -69,11 +69,11 @@
         themeaudio.volume = 0.1;
         // const notiAudio = new Audio("./sound/quick-positive-sound.wav ")
         window.addEventListener('keydown', (event) => {
-            $("#textAleart").fadeOut()
+            $("#textAleart").fadeOut(500)
             setTimeout(function() {
                     themeaudio.autoplay = true;
                     themeaudio.play();
-                }, 1000)
+                }, 500)
                 // notiAudio.play();
             console.log(event.key)
         });
@@ -87,4 +87,5 @@
 
 
 <script src="./data/collision.js "></script>
+<script src="./class.js "></script>
 <script src="./index.js "></script>

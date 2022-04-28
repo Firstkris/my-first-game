@@ -13,25 +13,6 @@ for (let i = 0; i < collisions.length; i += 50) {
 }
 // console.log(boundariesMap);
 
-class Boundary {
-    static width = 60
-    static height = 60
-    constructor({ position }) {
-        this.position = position
-        this.width = 60 //ขนาดของ pixel (12) คูณ ขนาดที่เราขยาย map ตอน export
-        this.height = 60
-
-    }
-
-    draw() {
-        context.fillStyle = 'red'
-        context.fillRect(this.position.x, this.position.y, this.width, this.height)
-
-    }
-
-
-}
-
 const mapBoundaries = []
 const offset = {
     x: -565,
@@ -59,38 +40,23 @@ context.fillRect(0, 0, canvas.width, canvas.height)
 const image = new Image()
 image.src = './img/First town map.png'
 
+const foregroundImage = new Image()
+foregroundImage.src = './img/foreground map.png'
+
 const playerImage = new Image()
 playerImage.src = './img/WalkDown.png'
 
-class Sprite {
-    constructor({ position, velocity, image, frames = { max: 1 } }) {
-        this.position = position
-        this.image = image
-        this.frames = frames
+const playerUpImage = new Image()
+playerUpImage.src = './img/WalkUp.png'
 
-        this.image.onload = () => {
-            this.width = this.image.width / this.frames.max
-            this.height = this.image.height
-            console.log(this.width)
-            console.log(this.height)
-        }
-    }
+const playerLeftImage = new Image()
+playerLeftImage.src = './img/WalkLeft.png'
 
-    draw() {
-        // context.drawImage(this.image, this.position.x, this.position.y)
-        context.drawImage(
-            this.image,
-            0, //for cropping position จุด x ที่ให้เริ่ม crop
-            0, //for cropping position จุด y ที่ให้เริ่ม crop
-            this.image.width / this.frames.max, //for width ความกว้างที่จะcrop (หาsร4 เพราะว่ามีสี่เฟรมในกาาเดิน)
-            this.image.height, //for height(ไม่ต้องหารอะไรเพราะใช้ความสูงภาพตัวละคร)
-            this.position.x,
-            this.position.y,
-            this.image.width / this.frames.max, //ขนาดทีจะแสดง
-            this.image.height //ขนาดทีจะแสดง 
-        )
-    }
-}
+const playerRightImage = new Image()
+playerRightImage.src = './img/WalkRight.png'
+
+const playerDownImage = new Image()
+playerDownImage.src = './img/WalkDown.png'
 
 
 const player = new Sprite({
@@ -98,13 +64,20 @@ const player = new Sprite({
         x: canvas.width / 2 - 192 / 8, // จัดกึ่งกลาง ให้ตัวละครอยู่กลางเฟรม (จากภาพติดกัน 4 ภาพ (หาร4) และ หาร 2 อีกครั้ง จะได้ตรงกลางตัวแรก),
         y: canvas.height / 2 - 69 / 2, // จัดกึ่งกลาง ให้ตัวละครอยู่กลางเฟรม
     },
-    image: playerImage,
+    image: playerDownImage,
     frames: {
         max: 4
+    },
+    sprites: {
+        up: playerUpImage,
+        left: playerLeftImage,
+        right: playerRightImage,
+        down: playerDownImage,
+
     }
 
-
 })
+console.log(player)
 
 const background = new Sprite({
     position: {
@@ -112,6 +85,13 @@ const background = new Sprite({
         y: offset.y
     },
     image: image
+})
+const foreground = new Sprite({
+    position: {
+        x: offset.x,
+        y: offset.y
+    },
+    image: foregroundImage
 })
 
 const keys = {
@@ -146,12 +126,12 @@ const keys = {
 //     )
 // }
 
-const testBoundary = new Boundary({
-        position: { x: 400, y: 400 }
-    }
+// const testBoundary = new Boundary({
+//         position: { x: 400, y: 400 }
+//     }
 
-)
-const movable = [background, testBoundary]
+
+const movable = [background, ...mapBoundaries, foreground]
 
 function rectangularColiision({ rectangle1 /* refer to player*/ , rectangle2 /* refer to boundary */ }) {
     return (
@@ -167,13 +147,13 @@ function animate() {
     window.requestAnimationFrame(animate)
     background.draw()
 
-    // mapBoundaries.forEach(boundary => {
-    //     boundary.draw()
-    //     console.log("b_drew")
+    mapBoundaries.forEach(boundary => {
+            boundary.draw()
 
-    // })
-    testBoundary.draw()
+        })
+        // testBoundary.draw()
     player.draw()
+    foreground.draw()
         // context.drawImage(
         //     player,
         //     0, //for cropping position จุด x ที่ให้เริ่ม crop
@@ -186,24 +166,111 @@ function animate() {
         //     player.height //ขนาดทีจะแสดงs 
         // )
 
-    if (
-        rectangularColiision({
-            rectangle1: player,
-            rectangle2: testBoundary
 
-        })
-    ) {
-        console.log('collied')
-    }
+    let moving = true
+    player.moving = false
 
     if (keys.w.pressed && lastKey === 'w') {
-        movable.forEach(movable => { movable.position.y += 4 })
+        player.moving = true
+        player.image = player.sprites.up
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x,
+                            y: boundary.position.y + 4
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+
+        if (moving)
+            movable.forEach(movable => { movable.position.y += 4 })
     } else if (keys.a.pressed && lastKey === 'a') {
-        movable.forEach(movable => { movable.position.x += 4 })
+        player.moving = true
+        player.image = player.sprites.left
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x + 4,
+                            y: boundary.position.y
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+        if (moving)
+            movable.forEach(movable => { movable.position.x += 4 })
     } else if (keys.s.pressed && lastKey === 's') {
-        movable.forEach(movable => { movable.position.y -= 4 })
+        player.moving = true
+        player.image = player.sprites.down
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x,
+                            y: boundary.position.y - 4
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+        if (moving)
+            movable.forEach(movable => { movable.position.y -= 4 })
     } else if (keys.d.pressed && lastKey === 'd') {
-        movable.forEach(movable => { movable.position.x -= 4 })
+        player.moving = true
+        player.image = player.sprites.right
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x - 4,
+                            y: boundary.position.y
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+        if (moving)
+            movable.forEach(movable => { movable.position.x -= 4 })
     }
 
 
@@ -237,7 +304,7 @@ window.addEventListener('keydown', (event) => {
             console.log('press d')
             break
     }
-    console.log(keys)
+    // console.log(keys)
 
 
 })

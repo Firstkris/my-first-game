@@ -38,10 +38,10 @@ console.log(mapBoundaries)
 context.fillRect(0, 0, canvas.width, canvas.height)
 
 const image = new Image()
-image.src = './img/First town map.png'
+image.src = './img/FirstTownMap.png'
 
 const foregroundImage = new Image()
-foregroundImage.src = './img/foreground map.png'
+foregroundImage.src = './img/foregroundMap.png'
 
 const playerImage = new Image()
 playerImage.src = './img/WalkDown.png'

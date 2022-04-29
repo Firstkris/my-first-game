@@ -58,3 +58,25 @@ class Boundary {
 
 
 }
+
+class Game {
+    startGame() {
+        $("#starScreen").fadeOut(1000)
+        this.toggleScreen('starScreen', false)
+        $("#canvas").fadeIn(1000)
+        this.toggleScreen('canvas', true)
+        setTimeout(function() {
+            audio.Map.play()
+        }, 500)
+
+
+
+    }
+
+    toggleScreen(id, toggle) {
+        let element = document.getElementById(id);
+        let display = (toggle) ? 'block' : 'none'
+        element.style.display = display;
+    }
+
+}

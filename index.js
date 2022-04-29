@@ -276,21 +276,34 @@ function animate() {
 
 }
 
-animate()
+window.onload = function() {
+    animate()
+}
 
-$(document).on('keypress', function(e) {
-    if (e.which == 13) {
+let game = new Game()
 
-        setTimeout(function() {
-                $("#canvas").fadeIn(500)
-                $("#textAleart").fadeOut(500)
-                audio.Map.play()
-                    // getAudioContext().resume();
+function start() {
+    console.log('Star Game')
+    game.startGame()
+}
 
-            }, 500)
-            // alert('You pressed enter!');
-    }
-});
+
+
+
+// $(document).on('keypress', function(e) {
+//     if (e.which == 13) {
+
+//         setTimeout(function() {
+//                 $("#canvas").fadeIn(500)
+//                 $("#textAleart").fadeOut(500)
+//                 audio.Map.play()
+//                 audio.Map.resume()
+//                     // getAudioContext().resume();
+
+//             }, 500)
+//             // alert('You pressed enter!');
+//     }
+// });
 
 
 let lastKey = ''

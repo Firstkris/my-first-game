@@ -61,9 +61,9 @@ class Boundary {
 
 class Game {
     startGame() {
-        $("#starScreen").fadeOut(1000)
+        // $("#starScreen").fadeOut(1000)
         this.toggleScreen('starScreen', false)
-        $("#canvas").fadeIn(1000)
+            // $("#canvas").fadeIn(1000)
         this.toggleScreen('canvasdiv', true)
         const audio = {
             Map: new Howl({

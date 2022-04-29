@@ -1,7 +1,7 @@
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d')
 
-console.log(collisions)
+// console.log(collisions)
 
 canvas.width = 1024
 canvas.height = 768
@@ -327,3 +327,24 @@ window.addEventListener('keyup', (event) => {
 
 
 })
+
+// let clicked = false
+// addEventListener('click', () => {
+//     if (!clicked) {
+//         audio.Map.play()
+//         clicked = true
+//     }
+// })
+$(document).on('keypress', function(e) {
+    if (e.which == 13) {
+
+        setTimeout(function() {
+                $("#canvas").fadeIn(500)
+                $("#textAleart").fadeOut(500)
+                audio.Map.play()
+                    // getAudioContext().resume();
+
+            }, 500)
+            // alert('You pressed enter!');
+    }
+});

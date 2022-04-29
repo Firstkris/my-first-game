@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GAME</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
     <style>
@@ -51,41 +50,21 @@
 <body>
 
     <div class="canvasdiv" id="canvasdiv">
-        <canvas></canvas>
+        <canvas id="canvas" style="display: none;"></canvas>
         <div class="info " id="textAleart">
             <h2>Welcome !</h2>
-            <h4> To start moving <br> Press <span> W, A, S </span> or <span>D</span></h4>
+            <h4> To start press <span>ENTER</span> <br> To move press <span> W, A, S </span> or <span>D</span></h4>
         </div>
     </div>
     <!-- <audio src="./sound/Back Home.wav " id="maintheme "> </audio> -->
 
 
-
-    <script>
-        // var themeaudio = document.getElementById("maintheme ");
-
-
-        const themeaudio = new Audio("./sound/BackHome.wav ")
-        themeaudio.volume = 0.1;
-        // const notiAudio = new Audio("./sound/quick-positive-sound.wav ")
-        window.addEventListener('keydown', (event) => {
-            $("#textAleart").fadeOut(500)
-            setTimeout(function() {
-                    themeaudio.autoplay = true;
-                    themeaudio.play();
-                }, 500)
-                // notiAudio.play();
-            console.log(event.key)
-        });
-
-        themeaudio.loop = true;
-    </script>
 </body>
 
 </html>
 
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="./data/audio.js"></script>
 <script src="./data/collision.js "></script>
 <script src="./class.js "></script>
 <script src="./index.js "></script>

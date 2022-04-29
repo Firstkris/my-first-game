@@ -65,18 +65,18 @@ class Game {
         this.toggleScreen('starScreen', false)
         $("#canvas").fadeIn(1000)
         this.toggleScreen('canvasdiv', true)
-            // const audio = {
-            //     Map: new Howl({
-            //         src: './sound/BackHome.wav',
-            //         html5: true,
-            //         volume: 0.1,
-            //         loop: true,
-            //         mute: false
-            //     }),
-            //     Noti: new Howl({
-            //         src: './sound/quick-positive-sound.wav'
-            //     })
-            // }
+        const audio = {
+            Map: new Howl({
+                src: './sound/BackHome.wav',
+                html5: true,
+                volume: 0.1,
+                loop: true,
+                mute: false
+            }),
+            Noti: new Howl({
+                src: './sound/quick-positive-sound.wav'
+            })
+        }
 
         setTimeout(function() {
             audio.Map.mute(false)

@@ -8,6 +8,7 @@
     <title>GAME</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script src="https://kit.fontawesome.com/7dbacef985.js" crossorigin="anonymous"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
 
@@ -21,8 +22,12 @@
         <button id="btn" onclick="start()">START</button>
         <h4>Press <span>ENTER</span> To start <br> yo move press <span> W, A, S </span> or <span>D</span></h4>
     </div>
-    <div class="canvasdiv" id="canvasdiv">
-        <canvas id="canvas" style="display: none;"></canvas>
+    <div class="canvasdiv" id="canvasdiv" style="display: none;">
+        <canvas id="canvas"></canvas>
+        <button id="soundbtn" onclick="soundoff()">  <i class="fa-solid fa-volume-xmark"></i>  </button>
+
+        <button id="soundbtn" onclick="soundon()">
+            <i class="fa-solid fa-volume-high"></i> </button>
 
     </div>
     <!-- <audio src="./sound/Back Home.wav " id="maintheme "> </audio> -->

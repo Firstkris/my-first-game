@@ -7,8 +7,8 @@ class Sprite {
         this.image.onload = () => {
             this.width = this.image.width / this.frames.max
             this.height = this.image.height
-            console.log(this.width)
-            console.log(this.height)
+                // console.log(this.width)
+                // console.log(this.height)
         }
         this.moving = false
         this.sprites = sprites
@@ -64,20 +64,22 @@ class Game {
         $("#starScreen").fadeOut(1000)
         this.toggleScreen('starScreen', false)
         $("#canvas").fadeIn(1000)
-        this.toggleScreen('canvas', true)
-        const audio = {
-            Map: new Howl({
-                src: './sound/BackHome.wav',
-                html5: true,
-                volume: 0.1,
-                loop: true
-            }),
-            Noti: new Howl({
-                src: './sound/quick-positive-sound.wav'
-            })
-        }
+        this.toggleScreen('canvasdiv', true)
+            // const audio = {
+            //     Map: new Howl({
+            //         src: './sound/BackHome.wav',
+            //         html5: true,
+            //         volume: 0.1,
+            //         loop: true,
+            //         mute: false
+            //     }),
+            //     Noti: new Howl({
+            //         src: './sound/quick-positive-sound.wav'
+            //     })
+            // }
 
         setTimeout(function() {
+            audio.Map.mute(false)
             audio.Map.play()
         }, 500)
 
@@ -87,6 +89,10 @@ class Game {
         let element = document.getElementById(id);
         let display = (toggle) ? 'block' : 'none'
         element.style.display = display;
+    }
+
+    soundoff() {
+        audio.stop();
     }
 
 }

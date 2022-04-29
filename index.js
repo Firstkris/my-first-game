@@ -32,7 +32,7 @@ boundariesMap.forEach((row, i) => {
     })
 })
 
-console.log(mapBoundaries)
+// console.log(mapBoundaries)
 
 // context.fillStyle = 'white'
 context.fillRect(0, 0, canvas.width, canvas.height)
@@ -60,24 +60,24 @@ playerDownImage.src = './img/WalkDown.png'
 
 
 const player = new Sprite({
-    position: {
-        x: canvas.width / 2 - 192 / 8, // จัดกึ่งกลาง ให้ตัวละครอยู่กลางเฟรม (จากภาพติดกัน 4 ภาพ (หาร4) และ หาร 2 อีกครั้ง จะได้ตรงกลางตัวแรก),
-        y: canvas.height / 2 - 69 / 2, // จัดกึ่งกลาง ให้ตัวละครอยู่กลางเฟรม
-    },
-    image: playerDownImage,
-    frames: {
-        max: 4
-    },
-    sprites: {
-        up: playerUpImage,
-        left: playerLeftImage,
-        right: playerRightImage,
-        down: playerDownImage,
+        position: {
+            x: canvas.width / 2 - 192 / 8, // จัดกึ่งกลาง ให้ตัวละครอยู่กลางเฟรม (จากภาพติดกัน 4 ภาพ (หาร4) และ หาร 2 อีกครั้ง จะได้ตรงกลางตัวแรก),
+            y: canvas.height / 2 - 69 / 2, // จัดกึ่งกลาง ให้ตัวละครอยู่กลางเฟรม
+        },
+        image: playerDownImage,
+        frames: {
+            max: 4
+        },
+        sprites: {
+            up: playerUpImage,
+            left: playerLeftImage,
+            right: playerRightImage,
+            down: playerDownImage,
 
-    }
+        }
 
-})
-console.log(player)
+    })
+    // console.log(player)
 
 const background = new Sprite({
     position: {
@@ -282,9 +282,25 @@ window.onload = function() {
 
 let game = new Game()
 
+
 function start() {
+
     console.log('Star Game')
     game.startGame()
+
+}
+
+function soundoff() {
+    // game.soundoff()
+    audio.Map.mute(true)
+
+}
+
+
+function soundon() {
+    // game.soundoff()
+    audio.Map.mute(false)
+
 }
 
 

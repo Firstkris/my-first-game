@@ -278,6 +278,20 @@ function animate() {
 
 animate()
 
+$(document).on('keypress', function(e) {
+    if (e.which == 13) {
+
+        setTimeout(function() {
+                $("#canvas").fadeIn(500)
+                $("#textAleart").fadeOut(500)
+                audio.Map.play()
+                    // getAudioContext().resume();
+
+            }, 500)
+            // alert('You pressed enter!');
+    }
+});
+
 
 let lastKey = ''
 window.addEventListener('keydown', (event) => {
@@ -335,18 +349,3 @@ window.addEventListener('keyup', (event) => {
 //         clicked = true
 //     }
 // })
-
-
-$(document).on('keypress', function(e) {
-    if (e.which == 13) {
-
-        setTimeout(function() {
-                $("#canvas").fadeIn(500)
-                $("#textAleart").fadeOut(500)
-                audio.Map.play()
-                    // getAudioContext().resume();
-
-            }, 500)
-            // alert('You pressed enter!');
-    }
-});

@@ -1,7 +1,7 @@
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d')
 
-// console.log(collisions)
+
 
 canvas.width = 1024
 canvas.height = 768
@@ -9,8 +9,14 @@ canvas.height = 768
 const boundariesMap = []
 for (let i = 0; i < collisions.length; i += 50) {
     boundariesMap.push(collisions.slice(i, 50 + i))
+}
+
+const battleZoneMap = []
+for (let i = 0; i < battleZoneData.length; i += 50) {
+    battleZoneMap.push(battleZoneData.slice(i, 50 + i))
 
 }
+
 // console.log(boundariesMap);
 
 const mapBoundaries = []
@@ -31,6 +37,20 @@ boundariesMap.forEach((row, i) => {
             // console.log(symbol)
     })
 })
+
+const battleZone = []
+battleZoneMap.forEach((row, i) => {
+    row.forEach((symbol, j) => {
+        if (symbol === 1095)
+            battleZone.push(new Boundary({
+                position: {
+                    x: j * Boundary.width + offset.x,
+                    y: i * Boundary.height + offset.y
+                }
+            }))
+    })
+})
+console.log(battleZone)
 
 // console.log(mapBoundaries)
 
@@ -66,7 +86,8 @@ const player = new Sprite({
         },
         image: playerDownImage,
         frames: {
-            max: 4
+            max: 4,
+            hold: 10
         },
         sprites: {
             up: playerUpImage,
@@ -131,7 +152,7 @@ const keys = {
 //     }
 
 
-const movable = [background, ...mapBoundaries, foreground]
+const movable = [background, ...mapBoundaries, foreground, ...battleZone]
 
 function rectangularColiision({ rectangle1 /* refer to player*/ , rectangle2 /* refer to boundary */ }) {
     return (
@@ -143,13 +164,24 @@ function rectangularColiision({ rectangle1 /* refer to player*/ , rectangle2 /* 
 
 }
 
+
+
+const battle = {
+    initiated: false
+}
+
 function animate() {
-    window.requestAnimationFrame(animate)
+    const animationID = window.requestAnimationFrame(animate)
+
     background.draw()
 
     mapBoundaries.forEach(boundary => {
-            boundary.draw()
+        boundary.draw()
 
+    })
+
+    battleZone.forEach(battlezone => {
+            battlezone.draw()
         })
         // testBoundary.draw()
     player.draw()
@@ -165,13 +197,73 @@ function animate() {
         //     player.width / 4, //ขนาดทีจะแสดง
         //     player.height //ขนาดทีจะแสดงs 
         // )
-
-
     let moving = true
-    player.moving = false
+    player.animate = false
+
+    console.log(animationID)
+    if (battle.initiated) return
+        //activate battle
+    if (keys.w.pressed || keys.a.pressed || keys.s.pressed || keys.d.pressed) {
+        for (let i = 0; i < battleZone.length; i++) {
+            const battlezone = battleZone[i]
+            const overlappingArea = (Math.min(player.position.x + player.width, battlezone.position.x + battlezone.width) -
+                    Math.max(player.position.x, battlezone.position.x)) *
+                (Math.min(player.position.y + player.height, battlezone.position.y + battlezone.height) -
+                    Math.max(player.position.y, battlezone.position.y))
+
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: battlezone
+
+                }) &&
+                overlappingArea > player.width * player.height / 3 &&
+                Math.random() < 0.02
+            ) {
+                console.log('battle activate')
+                window.cancelAnimationFrame(animationID) // deactivate current animation loop
+
+                battle.initiated = true
+                gsap.to('#overlappingDiv', {
+                    opacity: 1,
+                    repeat: 5,
+                    yoyo: true,
+                    duration: 0.4,
+                    onComplete() {
+                        gsap.to('#overlappingDiv', {
+                            opacity: 1,
+                            duration: 0.4,
+                            onComplete() {
+                                //activate a new animation loop
+                                animateBattle()
+                                gsap.to('#overlappingDiv', {
+                                    opacity: 0,
+                                    duration: 0.4,
+
+                                })
+                            }
+                        })
+
+
+
+
+
+
+                    }
+
+                })
+                break
+            }
+        }
+    }
+
+
+
+
+
 
     if (keys.w.pressed && lastKey === 'w') {
-        player.moving = true
+        player.animate = true
         player.image = player.sprites.up
 
         for (let i = 0; i < mapBoundaries.length; i++) {
@@ -194,10 +286,12 @@ function animate() {
             }
         }
 
+
+
         if (moving)
             movable.forEach(movable => { movable.position.y += 4 })
     } else if (keys.a.pressed && lastKey === 'a') {
-        player.moving = true
+        player.animate = true
         player.image = player.sprites.left
 
         for (let i = 0; i < mapBoundaries.length; i++) {
@@ -222,7 +316,7 @@ function animate() {
         if (moving)
             movable.forEach(movable => { movable.position.x += 4 })
     } else if (keys.s.pressed && lastKey === 's') {
-        player.moving = true
+        player.animate = true
         player.image = player.sprites.down
 
         for (let i = 0; i < mapBoundaries.length; i++) {
@@ -247,7 +341,7 @@ function animate() {
         if (moving)
             movable.forEach(movable => { movable.position.y -= 4 })
     } else if (keys.d.pressed && lastKey === 'd') {
-        player.moving = true
+        player.animate = true
         player.image = player.sprites.right
 
         for (let i = 0; i < mapBoundaries.length; i++) {
@@ -276,18 +370,183 @@ function animate() {
 
 }
 
-window.onload = function() {
-    animate()
+const wbtn = document.querySelector("#w")
+
+
+function motion() {
+    let moving = true
+    player.animate = false
+
+    if (wbtn.onclick) {
+        player.animate = true
+        player.image = player.sprites.up
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x,
+                            y: boundary.position.y + 4
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+
+        if (moving)
+            movable.forEach(movable => { movable.position.y += 4 })
+    } else if (keys.a.pressed && lastKey === 'a') {
+        player.animate = true
+        player.image = player.sprites.left
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x + 4,
+                            y: boundary.position.y
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+        if (moving)
+            movable.forEach(movable => { movable.position.x += 4 })
+    } else if (keys.s.pressed && lastKey === 's') {
+        player.animate = true
+        player.image = player.sprites.down
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x,
+                            y: boundary.position.y - 4
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+        if (moving)
+            movable.forEach(movable => { movable.position.y -= 4 })
+    } else if (keys.d.pressed && lastKey === 'd') {
+        player.animate = true
+        player.image = player.sprites.right
+
+        for (let i = 0; i < mapBoundaries.length; i++) {
+            const boundary = mapBoundaries[i]
+            if (
+                rectangularColiision({
+                    rectangle1: player,
+                    rectangle2: {...boundary,
+                        position: {
+                            x: boundary.position.x - 4,
+                            y: boundary.position.y
+                        }
+                    }
+
+                })
+            ) {
+                console.log('collied')
+                moving = false
+                break
+            }
+        }
+        if (moving)
+            movable.forEach(movable => { movable.position.x -= 4 })
+
+    }
 }
+
+// window.onload = function() {
+//     animate()
+// }
+
+
 
 let game = new Game()
 
-
 function start() {
-
+    animate()
     console.log('Star Game')
     game.startGame()
 
+}
+
+const battleBgImage = new Image()
+battleBgImage.src = './img/battlebg2.png'
+const battleBg = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    },
+    image: battleBgImage
+
+
+})
+
+const pigImage = new Image()
+pigImage.src = './img/GreenPig_36x30_2.png'
+const pig = new Sprite({
+    position: {
+        x: 200,
+        y: 420
+    },
+    image: pigImage,
+    frames: {
+        max: 9,
+        hold: 4
+    },
+    animate: true
+
+})
+
+const birdImage = new Image()
+birdImage.src = './img/FatBird_40X48.png'
+const bird = new Sprite({
+    position: {
+        x: 750,
+        y: 50
+    },
+    image: birdImage,
+    frames: {
+        max: 8,
+        hold: 4
+    },
+    animate: true
+
+})
+
+function animateBattle() {
+    window.requestAnimationFrame(animateBattle)
+    battleBg.draw()
+    pig.draw()
+    bird.draw()
+    console.log('animating battle')
 }
 
 function soundoff() {
@@ -302,8 +561,6 @@ function soundon() {
     audio.Map.mute(false)
 
 }
-
-
 
 
 // $(document).on('keypress', function(e) {
@@ -323,6 +580,8 @@ function soundon() {
 
 
 let lastKey = ''
+
+
 window.addEventListener('keydown', (event) => {
     // console.log(event.key) //เลือก event เมือกด keybord ส่วนนี้แสดงผลเป็นคีย์ทรี่เรากด
     switch (event.key) {

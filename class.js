@@ -1,5 +1,11 @@
 class Sprite {
-    constructor({ position, velocity, image, frames = { max: 1 }, sprites = [] }) {
+    constructor({
+        position,
+        image,
+        frames = { max: 1, hold: 10 },
+        sprites,
+        animate = false
+    }) {
         this.position = position
         this.image = image
         this.frames = {...frames, val: 0, elapse: 0 }
@@ -10,7 +16,7 @@ class Sprite {
                 // console.log(this.width)
                 // console.log(this.height)
         }
-        this.moving = false
+        this.animate = animate
         this.sprites = sprites
     }
 
@@ -27,11 +33,11 @@ class Sprite {
             this.image.width / this.frames.max, //ขนาดทีจะแสดง
             this.image.height //ขนาดทีจะแสดง 
         )
-        if (!this.moving) return
+        if (!this.animate) return
         if (this.frames.max > 1) {
             this.frames.elapse++
         }
-        if (this.frames.elapse % 10 === 0) { //slow walk motion
+        if (this.frames.elapse % this.frames.hold === 0) { //slow walk motion
             if (this.frames.val < this.frames.max - 1) this.frames.val++
                 else this.frames.val = 0
         }
@@ -51,7 +57,7 @@ class Boundary {
     }
 
     draw() {
-        context.fillStyle = '#f000'
+        context.fillStyle = '#f005'
         context.fillRect(this.position.x, this.position.y, this.width, this.height)
 
     }
@@ -61,15 +67,15 @@ class Boundary {
 
 class Game {
     startGame() {
-        // $("#starScreen").fadeOut(1000)
+        $("#starScreen").fadeOut(1000)
         this.toggleScreen('starScreen', false)
-            // $("#canvas").fadeIn(1000)
+        $("#canvas").fadeIn(1000)
         this.toggleScreen('canvasdiv', true)
         const audio = {
             Map: new Howl({
                 src: './sound/BackHome.wav',
                 html5: true,
-                volume: 0.1,
+                volume: 0.02,
                 loop: true,
                 mute: false
             }),
@@ -82,6 +88,8 @@ class Game {
             audio.Map.mute(false)
             audio.Map.play()
         }, 500)
+
+        return audio
 
     }
 
